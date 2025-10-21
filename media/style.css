@@ -1,41 +1,97 @@
 /* media/style.css */
 
+/* --- General Editor Styles --- */
 body {
-    background-color: var(--vscode-editor-background);
-    color: var(--vscode-editor-foreground);
-    padding: 2rem;
-    /* Add a little bit of font smoothing */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-size: large;
-  }
-  
-  /* 
-    Style the main EasyMDE container to have "readable line length".
-    This is the core of the clean, centered look.
-  */
-  .EasyMDEContainer {
-    max-width: 66vw;
-    margin: 0 auto;
-  }
-  
-  /* 
-    This is the key to the minimalist "writing on a page" feel.
-    We remove all borders and outlines from the editor itself.
-  */
-  .CodeMirror, .CodeMirror-focused {
-    background-color: var(--vscode-editor-background) !important;
-    color: var(--vscode-editor-foreground) !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important; /* Remove any focus shadows */
-  }
-  
-  .editor-toolbar, .editor-statusbar {
-    display: none !important; /* We can also disable them in JS, but this is a guarantee */
-  }
-  
-  /* Make sure the cursor color is visible and respects the theme */
-  .CodeMirror-cursor {
-    border-left: 1px solid var(--vscode-editorCursor-foreground) !important;
-  }
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  padding: 2rem;
+  font-size: large;
+}
+.EasyMDEContainer {
+  max-width: 66vw;
+  margin: 0 auto;
+}
+.CodeMirror {
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground);
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.editor-toolbar, .editor-statusbar {
+  display: none !important;
+}
+.CodeMirror-cursor {
+  border-left: 1px solid var(--vscode-editorCursor-foreground) !important;
+}
+
+/* --- THE NEW CODE BLOCK STYLES --- */
+
+/* 1. Style the code lines to create the container effect */
+.CodeMirror-line[class*=" cm-"] {
+  background-color: #282c34 !important; /* A slightly different dark background */
+  padding: 0 1em; /* Horizontal padding */
+  box-sizing: border-box;
+}
+
+/* 2. Style the first line of the block for top padding and corners */
+.CodeMirror-line.first-line-of-code {
+  padding-top: 1em;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+/* 3. Style the last line for bottom padding and corners */
+/* We select a code line that is immediately followed by a closing fence */
+.CodeMirror-line[class*=" cm-"] + .CodeMirror-line.cm-formatting-code-block {
+  /* Unfortunately, this selects the fence. We need to style the line *before* it.
+     The easiest way is to apply bottom style to all and let the next line cover it up. */
+}
+/* A simpler approach: apply bottom styles to all code lines. It only matters on the last one. */
+.CodeMirror-line[class*=" cm-"] {
+  padding-bottom: 0.2em; /* Give a little space at the bottom */
+}
+/* Let's refine this. We'll use JS to add a 'last-line-of-code' class for precision. */
+/* (For now, let's keep it simple and omit the bottom radius as it's tricky with pure CSS) */
+
+
+/* 4. The Language Tag (using the data-lang attribute from Step 1) */
+.CodeMirror-line.first-line-of-code {
+  position: relative; /* Make it a positioning context */
+}
+.CodeMirror-line.first-line-of-code::after {
+  content: attr(data-lang); /* Display the language name */
+  position: absolute;
+  top: 0.5em;
+  right: 1em;
+  font-size: 0.8em;
+  color: #abb2bf;
+  opacity: 0.6;
+}
+
+
+/* --- Syntax Highlighting Colors from your Image --- */
+
+/* Keywords (if) */
+.cm-keyword { color: #e06c75; }
+
+/* Variables, Properties, and default text inside block */
+.cm-variable, .cm-property { color: #abb2bf; }
+
+/* Strings ("Hello World!") */
+.cm-string { color: #98c379; }
+
+/* Numbers (1) */
+.cm-number { color: #d19a66; }
+
+/* Comments (and the ``` fences) */
+.cm-comment { color: #5c6370; }
+
+/* Operators (==) */
+.cm-operator { color: #c678dd; }
+
+/* Built-in functions (print) */
+.cm-builtin { color: #e5c07b; }
+
+/* Brackets, punctuation */
+.cm-bracket { color: #abb2bf; }

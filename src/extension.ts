@@ -70,7 +70,7 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
         });
     }
 
-    /**
+    /**sure
      * A helper function to apply changes from the webview to the VS Code document.
      */
     private updateTextDocument(document: vscode.TextDocument, text: string) {
@@ -88,93 +88,42 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
      * Generates the HTML content for our webview.
      */
     private getWebviewContent(webview: vscode.Webview, initialContent: string): string {
-        // Get safe URIs for our scripts and styles
+        // We only need URIs for the CSS and our single, bundled script
         const easyMDECssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', 'easymde', 'dist', 'easymde.min.css'));
-        const easyMDEJsUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', 'easymde', 'dist', 'easymde.min.js'));
         const customCssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'style.css'));
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'webview.dist.js')); // Point to the bundled file
+    
         const nonce = getNonce();
-
-        const safeInitialContent = JSON.stringify(initialContent);
-
+    
+        const escapedInitialContent = initialContent
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta http-equiv="Content-Security-Policy" content="
                 default-src 'none';
-                style-src ${webview.cspSource};
+                style-src ${webview.cspSource} 'unsafe-inline';
                 script-src 'nonce-${nonce}';
                 img-src ${webview.cspSource} https:;
                 font-src ${webview.cspSource};
             ">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
             <link href="${easyMDECssUri}" rel="stylesheet">
             <link href="${customCssUri}" rel="stylesheet">
-
+    
             <title>Slate Editor</title>
         </head>
         <body>
-            <textarea id="markdown-editor"></textarea>
-
-            <script nonce="${nonce}" src="${easyMDEJsUri}"></script>
-
-            <script nonce="${nonce}">
-                (function() {
-                    const vscode = acquireVsCodeApi();
-                    
-                    // This flag prevents the editor from sending an update message
-                    // while an update from the extension is being applied.
-                    let isUpdatingFromExtension = false;
-
-                    const easyMDE = new EasyMDE({
-                        element: document.getElementById('markdown-editor'),
-                        initialValue: ${safeInitialContent},
-                        
-                        // --- UI Customization ---
-                        toolbar: false,      // Hide the toolbar
-                        status: false,       // Hide the status bar
-                        spellChecker: false, // Disable spell checker for performance
-                        
-                        // Let the editor grow vertically as you type
-                        maxHeight: "none", 
-                    });
-
-                    // --- Send changes from EasyMDE to the extension ---
-                    easyMDE.codemirror.on("change", () => {
-                        if (isUpdatingFromExtension) {
-                            return; // Don't send an update back if the change came from the extension
-                        }
-                        vscode.postMessage({
-                            type: 'edit',
-                            text: easyMDE.value()
-                        });
-                    });
-
-                    // --- Receive updates from the extension ---
-                    window.addEventListener('message', event => {
-                        const message = event.data;
-                        switch (message.type) {
-                            case 'update':
-                                // **THE CRITICAL FIX IS HERE**
-                                // Normalize line endings to prevent unnecessary updates.
-                                // VS Code's document might use \\r\\n, while the browser uses \\n.
-                                const receivedText = message.text.replace(/\\r\\n/g, '\\n');
-                                const currentText = easyMDE.value().replace(/\\r\\n/g, '\\n');
-
-                                if (receivedText !== currentText) {
-                                    isUpdatingFromExtension = true;
-                                    // Preserve cursor position when updating content
-                                    const cursor = easyMDE.codemirror.getCursor();
-                                    easyMDE.value(message.text);
-                                    easyMDE.codemirror.setCursor(cursor);
-                                    isUpdatingFromExtension = false;
-                                }
-                                return;
-                        }
-                    });
-                }());
-            </script>
+            <textarea id="markdown-editor">${escapedInitialContent}</textarea>
+    
+            <script nonce="${nonce}" src="${scriptUri}"></script>
         </body>
         </html>`;
     }
