@@ -19901,6 +19901,28 @@ var easyMDE = new import_easymde.default({
   maxHeight: "none"
 });
 var debounceTimeout;
+easyMDE.codemirror.on("beforeChange", (instance, changeObj) => {
+  if (changeObj.origin !== "+input") {
+    return;
+  }
+  const fenceRegex = /^```(\w*)$/;
+  const match = changeObj.text[0].match(fenceRegex);
+  if (match) {
+    changeObj.cancel();
+    const openingFence = match[0];
+    const closingFence = "```";
+    const fullBlock = `${openingFence}
+
+${closingFence}`;
+    instance.replaceRange(fullBlock, changeObj.from, changeObj.to);
+    const newCursorPos = {
+      line: changeObj.from.line + 1,
+      ch: 0
+      // Place cursor at the beginning of the line
+    };
+    instance.setCursor(newCursorPos);
+  }
+});
 easyMDE.codemirror.on("change", () => {
   if (isUpdatingFromExtension) {
     return;

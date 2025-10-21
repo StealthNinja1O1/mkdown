@@ -42,11 +42,7 @@ body {
 }
 
 /* 3. Style the last line for bottom padding and corners */
-/* We select a code line that is immediately followed by a closing fence */
-.CodeMirror-line[class*=" cm-"] + .CodeMirror-line.cm-formatting-code-block {
-  /* Unfortunately, this selects the fence. We need to style the line *before* it.
-     The easiest way is to apply bottom style to all and let the next line cover it up. */
-}
+
 /* A simpler approach: apply bottom styles to all code lines. It only matters on the last one. */
 .CodeMirror-line[class*=" cm-"] {
   padding-bottom: 0.2em; /* Give a little space at the bottom */
