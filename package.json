@@ -40,7 +40,6 @@
     "build:webview": "esbuild ./src/webview-src/main.ts --bundle --outfile=media/webview.dist.js --format=iife"
   },
   "devDependencies": {
-    "@types/codemirror": "^5.60.16",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "@types/vscode": "^1.98.0",
@@ -57,13 +56,23 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
+    "...": "link:...",
+    "@babel/runtime": "^7.28.4",
+    "@codemirror/autocomplete": "^6.19.0",
     "@codemirror/commands": "^6.9.0",
+    "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-markdown": "^6.4.0",
+    "@codemirror/lang-python": "^6.2.1",
     "@codemirror/language": "^6.11.3",
     "@codemirror/language-data": "^6.5.1",
+    "@codemirror/lint": "^6.9.0",
+    "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.3",
     "@codemirror/view": "^6.38.6",
-    "@lezer/highlight": "^1.2.2"
+    "@lezer/highlight": "^1.2.2",
+    "@lezer/markdown": "^1.5.1",
+    "@uiw/codemirror-theme-vscode": "^4.25.2",
+    "codemirror": "^6.0.2"
   }
 }

@@ -1,59 +1,88 @@
-import { EditorState } from '@codemirror/state';
-import { EditorView, keymap, lineNumbers, highlightActiveLineGutter } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import { markdownHighlighting } from '../slate-plugins/markdownHighlighting';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { languages } from '@codemirror/language-data';
 import { imagePlugin } from '../slate-plugins/imagePlugin';
+import {EditorState} from "@codemirror/state"
+import {
+  EditorView, keymap, drawSelection, 
+  dropCursor, rectangularSelection, crosshairCursor
+} from "@codemirror/view"
+import {
+  syntaxHighlighting, indentOnInput,
+  bracketMatching, foldKeymap
+} from "@codemirror/language"
+import {
+  defaultKeymap, history, historyKeymap
+} from "@codemirror/commands"
+import {
+  searchKeymap, highlightSelectionMatches
+} from "@codemirror/search"
+import {
+  autocompletion, completionKeymap, closeBrackets,
+  closeBracketsKeymap
+} from "@codemirror/autocomplete"
+import { lintKeymap } from "@codemirror/lint"
+import { indentWithTab } from "@codemirror/commands"
+import { markdown } from "@codemirror/lang-markdown"
+import {languages,} from "@codemirror/language-data"
+import { slateTheme, centeredLayout } from '../slate-plugins/slateTheme';
 
-// VS Code webview API
+// Standard VS Code Webview API boilerplate
 declare const acquireVsCodeApi: () => {
     postMessage(message: any): void;
 };
 const vscode = acquireVsCodeApi();
-
-// A flag to prevent sending updates back to the extension while an update is coming from the extension
 let isUpdatingFromExtension = false;
 
-// Create the CodeMirror 6 editor
+// Initialize the CodeMirror 6 editor
 const editor = new EditorView({
     state: EditorState.create({
-        doc: '', // Initial content is empty, will be populated by a message from the extension
+        doc: '',
         extensions: [
-            // lineNumbers(),
-            // highlightActiveLineGutter(),
-            history(),
-            keymap.of([...defaultKeymap, ...historyKeymap]),
+
+            /* === CODEMIRROR BUILT IN EXTENSIONS === */
+            history(), // Undo/redo history
+            drawSelection(),
+            dropCursor(),
+            EditorState.allowMultipleSelections.of(true), // Allow multiple cursors/selections
+            indentOnInput(),
+            syntaxHighlighting(slateTheme), // Theme (default: defaultHighlightStyle)
+            bracketMatching(), // Highlight matching brackets near cursor
+            closeBrackets(),
+            autocompletion(),
+            rectangularSelection(),
+            crosshairCursor(),
+            highlightSelectionMatches(),
+            EditorView.lineWrapping, 
+            keymap.of([
+            ...closeBracketsKeymap,
+            ...defaultKeymap,
+            ...searchKeymap,
+            ...historyKeymap,
+            ...foldKeymap,
+            ...completionKeymap,
+            ...lintKeymap,
+            indentWithTab
+            ]),
             markdown({
-                base: markdownLanguage,
-                codeLanguages: languages, // This enables syntax highlighting inside fenced code blocks
-                addKeymap: true,
+                pasteURLAsLink: true,
+                codeLanguages: languages,
             }),
-            oneDark, // Add a theme (you can create your own or use others)
-            // This is the listener that sends changes back to the VS Code extension
+           
+            /* === CUSTOM SLATE PLUGINS === */ 
+            imagePlugin,
+            centeredLayout,
+            
+            // Listener to send document changes to the VS Code extension
             EditorView.updateListener.of((update) => {
                 if (update.docChanged && !isUpdatingFromExtension) {
                     const newText = update.state.doc.toString();
                     vscode.postMessage({ type: 'edit', text: newText });
                 }
             }),
-            // Make the editor take up the full height
-            EditorView.theme({
-                "&": {height: "100vh"},
-                ".cm-scroller": {overflow: "auto"}
-            }),
-            
-            // Cusotm slate plugins
-            imagePlugin,
-            markdownHighlighting,
         ],
     }),
-    parent: document.body, // Attach the editor directly to the body
+    parent: document.querySelector('#editor') as HTMLElement,
 });
 
-
-// Listen for messages from the VS Code extension
+// Listener to receive document updates from the VS Code extension
 window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.type === 'update') {
