@@ -2,20 +2,14 @@
 
 ## Project Overview
 
-This is a highly customized, lightweight Markdown editor built on EasyMDE (which uses CodeMirror 5).
+This is a highly customized, lightweight Markdown editor built on CodeMirror 6.
 
-The core philosophy of this project is to achieve a seamless WYSIWYG markdown editing experience in VSCode without the clunkiness of many full-fledged editors. The project is heavily inspired by the likes of Typora and Obsidian.md. 
+The core philosophy of this project is to achieve a seamless markdown editing experience close to WYSIWYG in VSCode, without the clunkiness of many full-fledged editors. The project is heavily inspired by the likes of Typora and Obsidian.md. In an effort to make markdown editing seamless, the end result is something resembling a mix between EasyMDE and Obsidian.md's live preview mode. 
 
 ## Showcase
 
 ![Slate Demo](media/Slate-Preview-0.0.1.jpg)
-
-
-## Built With
-
-EasyMDE: The base Markdown editor library.
-
-CodeMirror 5: The underlying text editor engine.
+*Note: some elements look slightly different with the major update to CodeMirror 6. A new image is on its way.*
 
 ## For Developers
 
