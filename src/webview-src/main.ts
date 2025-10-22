@@ -1,90 +1,101 @@
-import EasyMDE from 'easymde';
-import 'codemirror/mode/gfm/gfm';
-import { highlightCodeBlocks } from '../modules/highlightCodeBlocks';   
+import { imagePlugin } from '../slate-plugins/imagePlugin';
+import {EditorState} from "@codemirror/state"
+import {
+  EditorView, keymap, drawSelection, 
+  dropCursor, rectangularSelection, crosshairCursor
+} from "@codemirror/view"
+import {
+  syntaxHighlighting, indentOnInput,
+  bracketMatching, foldKeymap
+} from "@codemirror/language"
+import {
+  defaultKeymap, history, historyKeymap
+} from "@codemirror/commands"
+import {
+  searchKeymap, highlightSelectionMatches
+} from "@codemirror/search"
+import {
+  autocompletion, completionKeymap, closeBrackets,
+  closeBracketsKeymap
+} from "@codemirror/autocomplete"
+import { lintKeymap } from "@codemirror/lint"
+import { indentWithTab } from "@codemirror/commands"
+import { markdown } from "@codemirror/lang-markdown"
+import {languages,} from "@codemirror/language-data"
+import { slateTheme, centeredLayout } from '../slate-plugins/slateTheme';
+import { fenceBlockBackground } from "../slate-plugins/codeBlockPlugin";
 
-// languages
-import 'codemirror/mode/python/python';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/markdown/markdown';
-import 'codemirror/mode/meta'; // auto detecting languages
-import 'codemirror/mode/xml/xml';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/shell/shell';
-import 'codemirror/mode/sql/sql';
-import 'codemirror/mode/yaml/yaml';
-import 'codemirror/mode/properties/properties';
-import 'codemirror/mode/toml/toml';
-import 'codemirror/mode/rust/rust';
-import 'codemirror/mode/go/go';
-import 'codemirror/mode/php/php';
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/lua/lua';
-import 'codemirror/mode/r/r';
-
-// VS Code webview setup
+// Standard VS Code Webview API boilerplate
 declare const acquireVsCodeApi: () => {
     postMessage(message: any): void;
-    getState(): any;
-    setState(newState: any): void;
 };
 const vscode = acquireVsCodeApi();
 let isUpdatingFromExtension = false;
 
-// Editor setup
-const textarea = document.getElementById('markdown-editor') as HTMLTextAreaElement;
-const easyMDE = new EasyMDE({
-    element: textarea,
-    mode: {
-        name: 'gfm',
-        fencedCodeBlockHighlighting: true
-    },
-    toolbar: false,
-    status: false,
-    spellChecker: false,
-    maxHeight: "none",
-    autoDownloadFontAwesome: false,
-    previewImagesInEditor: true,
-    renderingConfig: {
-        codeSyntaxHighlighting: true,
-    },
-    placeholder: "Type here...",
-} as any);
+// Initialize the CodeMirror 6 editor
+const editor = new EditorView({
+    state: EditorState.create({
+        doc: '',
+        extensions: [
 
-// Initial highlight
-highlightCodeBlocks(easyMDE.codemirror);
+            /* === CODEMIRROR BUILT IN EXTENSIONS === */
+            history(), // Undo/redo history
+            drawSelection(),
+            dropCursor(),
+            EditorState.allowMultipleSelections.of(true), // Allow multiple cursors/selections
+            indentOnInput(),
+            syntaxHighlighting(slateTheme), // Theme (default: defaultHighlightStyle)
+            bracketMatching(), // Highlight matching brackets near cursor
+            closeBrackets(),
+            autocompletion(),
+            rectangularSelection(),
+            crosshairCursor(),
+            highlightSelectionMatches(),
+            EditorView.lineWrapping, 
+            keymap.of([
+            ...closeBracketsKeymap,
+            ...defaultKeymap,
+            ...searchKeymap,
+            ...historyKeymap,
+            ...foldKeymap,
+            ...completionKeymap,
+            ...lintKeymap,
+            indentWithTab
+            ]),
+            markdown({
+                pasteURLAsLink: true,
+                codeLanguages: languages,
+            }),
+           
+            /* === CUSTOM SLATE PLUGINS === */ 
+            imagePlugin,
+            centeredLayout, 
+            fenceBlockBackground,
 
-// Update highlights on every change (debounced for performance)
-let highlightTimeout: NodeJS.Timeout | undefined;
-easyMDE.codemirror.on('change', () => {
-    if (highlightTimeout) clearTimeout(highlightTimeout);
-    highlightTimeout = setTimeout(() => highlightCodeBlocks(easyMDE.codemirror), 100);
+            // Listener to send document changes to the VS Code extension
+            EditorView.updateListener.of((update) => {
+                if (update.docChanged && !isUpdatingFromExtension) {
+                    const newText = update.state.doc.toString();
+                    vscode.postMessage({ type: 'edit', text: newText });
+                }
+            }),
+        ],
+    }),
+    parent: document.querySelector('#editor') as HTMLElement,
 });
 
-// --- Post changes to VS Code ---
-let debounceTimeout: NodeJS.Timeout | undefined;
-easyMDE.codemirror.on("change", () => {
-    if (isUpdatingFromExtension) return;
-
-    if (debounceTimeout) clearTimeout(debounceTimeout);
-
-    debounceTimeout = setTimeout(() => {
-        vscode.postMessage({ type: 'edit', text: easyMDE.value() });
-    }, 250);
-});
-
-// --- Receive updates from VS Code ---
-window.addEventListener('message', event => {
+// Listener to receive document updates from the VS Code extension
+window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.type === 'update') {
-        const receivedText = message.text.replace(/\r\n/g, '\n');
-        const currentText = easyMDE.value().replace(/\r\n/g, '\n');
+        const receivedText = message.text;
+        const currentText = editor.state.doc.toString();
 
         if (receivedText !== currentText) {
             isUpdatingFromExtension = true;
-            const cursor = easyMDE.codemirror.getCursor();
-            easyMDE.value(message.text);
-            easyMDE.codemirror.setCursor(cursor, undefined, { scroll: false }); // suppress jumps
+            editor.dispatch({
+                changes: { from: 0, to: currentText.length, insert: receivedText },
+            });
             isUpdatingFromExtension = false;
         }
     }

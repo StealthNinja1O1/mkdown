@@ -1,84 +1,15 @@
-/* --- General Editor Styles --- */
-body {
-  background-color: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
-  padding: 2rem;
-  font-size: large;
-  font-family: var(--vscode-editor-font-family);
+html, body, #editor {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-.EasyMDEContainer {
-  max-width: 50vw;
-  margin: 0 auto;
-}
-
-.CodeMirror {
-  background-color: var(--vscode-editor-background) !important;
-  color: var(--vscode-editor-foreground);
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.editor-toolbar, .editor-statusbar {
-  display: none !important;
-}
-
-.CodeMirror-cursor {
-  border-left: 1px solid var(--vscode-editorCursor-foreground) !important;
-}
-
-/* ====== Fenced Code Block Styling ====== */
-
-/* Style lines with ``` */
-.CodeMirror-line:has(span.cm-formatting-code-block.cm-comment) {
-  /* Apply the dark background to the whole line */
-  background-color: #161616;
-  color: #999; 
-  font-style: italic;
-}
-
-/* Lines inside a fenced code block */
-.CodeMirror .cm-code-block {
-  background: #161616;  
-  display: block; /* ensures full line width */
-}
-
-/* Syntax highlighting for code tokens */
-/* Obsidian-inspired CodeMirror theme */
-.CodeMirror .cm-keyword { color: #c792ea; }    
-.CodeMirror .cm-number { color: #f78c6c; }   
-.CodeMirror .cm-string { color: #c3e88d; }    
-.CodeMirror .cm-comment { color: #546e7a; font-style: italic; } 
-.CodeMirror .cm-builtin { color: #ffcb6b; }    
-.CodeMirror .cm-operator { color: #89ddff; }  
-.CodeMirror .cm-variable { color: #82aaff; }   
-.CodeMirror .cm-def { color: #ffcb6b; }        
-.CodeMirror .cm-bracket { color: #89ddff; }  
-.CodeMirror .cm-tag { color: #f07178; }       
-.CodeMirror .cm-attribute { color: #ffcb6b; } 
-/* it may be worth using the new cm-code-block type for these */
-
-
-/* Changing horizontal rules to lines for visual clarity */
-.cm-hr {
-  color: rgba(0, 0, 0, 0); 
+.cm-codeBlock {
+  background-color: rgba(46, 46, 46, 0.7); /* transparent */
+  padding: 0 0.5em;
+  overflow-x: auto;
+  font-family: monospace;
   position: relative;
-  display: inline-block; 
-  width: 100%; 
+  z-index: 0;
 }
-
-.cm-hr::after {
-  content: ''; 
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #aaaaaa; 
-  transform: translateY(-50%);
-  
-}
-
-
 
