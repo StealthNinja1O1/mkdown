@@ -23,6 +23,7 @@ import { indentWithTab } from "@codemirror/commands"
 import { markdown } from "@codemirror/lang-markdown"
 import {languages,} from "@codemirror/language-data"
 import { slateTheme, centeredLayout } from '../slate-plugins/slateTheme';
+import { fenceBlockBackground } from "../slate-plugins/codeBlockPlugin";
 
 // Standard VS Code Webview API boilerplate
 declare const acquireVsCodeApi: () => {
@@ -68,8 +69,9 @@ const editor = new EditorView({
            
             /* === CUSTOM SLATE PLUGINS === */ 
             imagePlugin,
-            centeredLayout,
-            
+            centeredLayout, 
+            fenceBlockBackground,
+
             // Listener to send document changes to the VS Code extension
             EditorView.updateListener.of((update) => {
                 if (update.docChanged && !isUpdatingFromExtension) {
