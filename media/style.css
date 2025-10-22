@@ -17,3 +17,9 @@ html, body, #editor {
   color: #FF6A13;
 }
 
+/* TEMPORARY FIX: Markdown Styling in Code Blocks */
+.cm-codeBlock .ͼ10, .cm-codeBlock .ͼ11, .cm-codeBlock .ͼ12 {
+  color: indianred;
+  font-size: 18px;
+}
+
