@@ -41,7 +41,7 @@ Optionally, if you want to use mkdown as your default markdown editor, you can a
 
 ### Developers
 
-1. `git clone https://github.com/archiebhl/mkdown.git`
+1. `git clone https://github.com/axshb/mkdown.git`
 2. `cd mkdown`
 3. `pnpm install`
 4. `pnpm run compile`
