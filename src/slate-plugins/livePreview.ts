@@ -6,53 +6,46 @@ import DOMPurify from "isomorphic-dompurify";
 const minifyHTML = (html: string): string => {
   return (
     html
-      // Remove comments (including conditional comments)
-      .replace(/<!--[\s\S]*?-->/g, "")
-      // Remove all newlines and carriage returns
-      .replace(/[\r\n]+/g, "")
-      // Remove all tabs
-      .replace(/\t/g, "")
-      // Remove extra whitespace between tags (but preserve single spaces in content)
-      .replace(/>\s+</g, "><")
-      // Remove leading/trailing whitespace from the entire string
-      .replace(/^\s+|\s+$/g, "")
-      // Collapse multiple spaces into single space (but only outside of quoted strings)
-      .replace(/\s{2,}/g, " ")
-      // Remove spaces around = in attributes
-      .replace(/\s*=\s*/g, "=")
-      // Remove spaces before and after tag brackets
+      .replace(/<!--[\s\S]*?-->/g, "") // comments
+      .replace(/[\r\n]+/g, "") // newlines, carriage returns
+      .replace(/\t/g, "") // tabs
+      .replace(/>\s+</g, "><") // extra whitespace in tags
+      .replace(/^\s+|\s+$/g, "") // leading/trailing whitespace 
+      .replace(/\s{2,}/g, " ") // collapse multiple spaces to 1
+      .replace(/\s*=\s*/g, "=") // remove spaces around "=" in attributes
+      // eemove spaces before and after tag brackets
       .replace(/\s*<\s*/g, "<")
       .replace(/\s*>\s*/g, ">")
-      // Minify CSS within style tags
+      // minify css within style tags
       .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (match, css) => {
         const minifiedCSS = css
-          .replace(/\/\*[\s\S]*?\*\//g, "") // Remove CSS comments
+          .replace(/\/\*[\s\S]*?\*\//g, "") // css comments
           .replace(/\s*{\s*/g, "{")
           .replace(/\s*}\s*/g, "}")
           .replace(/\s*;\s*/g, ";")
           .replace(/\s*:\s*/g, ":")
           .replace(/\s*,\s*/g, ",")
-          .replace(/;\s*}/g, "}") // Remove last semicolon before }
-          .replace(/[\r\n\t]/g, "") // Remove all newlines and tabs
-          .replace(/\s{2,}/g, " ") // Collapse multiple spaces
+          .replace(/;\s*}/g, "}") // last semicolon before }
+          .replace(/[\r\n\t]/g, "") // all newlines and tabs
+          .replace(/\s{2,}/g, " ") // multiple spaces
           .trim();
         return `<style>${minifiedCSS}</style>`;
       })
-      // Minify inline style attributes
+      // minify inline style attributes
       .replace(/style\s*=\s*["']([^"']*?)["']/gi, (match, style) => {
         const minifiedStyle = style
           .replace(/\s*;\s*/g, ";")
           .replace(/\s*:\s*/g, ":")
-          .replace(/;\s*$/, "") // Remove trailing semicolon
+          .replace(/;\s*$/, "") // remove trailing semicolon
           .replace(/\s{2,}/g, " ")
           .trim();
         return `style="${minifiedStyle}"`;
       })
-      // Remove optional quotes around simple attribute values (be careful with this)
+      // remove optional quotes around simple attribute values (careful)
       .replace(/=["']([a-zA-Z0-9\-_]+)["']/g, "=$1")
-      // Remove spaces in self-closing tags
+      // remove spaces in self-closing tags
       .replace(/\s*\/\s*>/g, "/>")
-      // Final cleanup
+      // cleanup
       .trim()
   );
 };
@@ -120,6 +113,22 @@ class BulletWidget extends WidgetType {
   }
 }
 
+class OrderedWidget extends WidgetType {
+  constructor(readonly text: string) {
+    super();
+  }
+  toDOM() {
+    const span = document.createElement("span");
+    span.textContent = this.text;
+    span.className = "cm-list-ordered";
+    span.style.fontWeight = "bold";
+    return span;
+  }
+  ignoreEvent() {
+    return false;
+  }
+}
+
 export const livePreview = ViewPlugin.fromClass(
   class {
     decorations: DecorationSet;
@@ -147,9 +156,7 @@ export const livePreview = ViewPlugin.fromClass(
             const nodeLine = state.doc.lineAt(node.from);
             const isHTML = node.name === "HTMLTag" || node.name === "HTMLBlock";
 
-            // Reveal Logic
-            // If it's HTML, reveal if selection intersects the BLOCK [node.from, node.to]
-            // If it's anything else (Line-based), reveal if selection intersects the LINE.
+            // reveal logic
             if (isHTML) {
               if (selection.from <= node.to && selection.to >= node.from) {
                 return;
@@ -162,6 +169,7 @@ export const livePreview = ViewPlugin.fromClass(
 
             if (node.name === "HeaderMark") {
 
+              // fix spaces before headers on hiding md symbols
               const afterMark = state.sliceDoc(node.to, node.to + 1);
               let replacementEnd = node.to;
               if (afterMark === " ") {
@@ -173,14 +181,31 @@ export const livePreview = ViewPlugin.fromClass(
               builder.add(node.from, node.to, Decoration.replace({}));
             } else if (node.name === "CodeMark") {
               builder.add(node.from, node.to, Decoration.replace({}));
+
             } else if (node.name === "ListMark") {
-              builder.add(
-                node.from,
-                node.to,
-                Decoration.replace({
-                  widget: new BulletWidget(),
-                })
-              );
+
+              // separate ordered vs unordered list decorations 
+              const mark = state.doc.sliceString(node.from, node.to);
+              const isOrdered = /^\s*\d+[.)]/.test(mark);
+
+              if (isOrdered) {
+                builder.add(
+                  node.from,
+                  node.to,
+                  Decoration.replace({
+                    widget: new OrderedWidget(mark),
+                  })
+                );
+              } else {
+                builder.add(
+                  node.from,
+                  node.to,
+                  Decoration.replace({
+                    widget: new BulletWidget(),
+                  })
+                );
+              }
+
             } else if (node.name === "Image") {
               const text = state.sliceDoc(node.from, node.to);
               const match = text.match(/^!\[(.*?)\]\((.*?)\)$/);
@@ -207,7 +232,7 @@ export const livePreview = ViewPlugin.fromClass(
               }
             } else if (isHTML) {
               const text = state.sliceDoc(node.from, node.to);
-              // Minify the HTML before rendering
+              // minify html before rendering
               const minified = minifyHTML(text);
               builder.add(
                 node.from,

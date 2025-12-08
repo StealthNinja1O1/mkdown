@@ -32,7 +32,7 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   private isUpdatingFromWebview = false;
   private webviews = new Set<vscode.WebviewPanel>();
 
-  constructor(private readonly context: vscode.ExtensionContext) {}
+  constructor(private readonly context: vscode.ExtensionContext) { }
 
   public static register(context: vscode.ExtensionContext, provider: SlateEditorProvider): vscode.Disposable {
     return vscode.window.registerCustomEditorProvider(SlateEditorProvider.viewType, provider, {
@@ -43,9 +43,6 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   public postMessageToActiveWebview(message: any) {
-    // Broadly sending to all might be simpler for now, or track active.
-    // Custom Editors don't easily expose "active" state to the provider unless tracked.
-    // We will send to all for simplicity, or just the one that is visible.
     for (const panel of this.webviews) {
       if (panel.visible) {
         panel.webview.postMessage(message);

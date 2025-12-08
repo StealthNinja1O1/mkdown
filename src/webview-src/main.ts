@@ -83,12 +83,63 @@ let isUpdatingFromExtension = false;
 
 const themeCompartment = new Compartment();
 const themeMap: { [key: string]: any } = {
-  vsCodeDark,
-  vsCodeLight,
+  abcdef,
+  abcdefMergeStyles,
+  applyMergeRevertStyles,
+  abyss,
+  abyssMergeStyles,
+  androidStudio,
+  androidStudioMergeStyles,
+  andromeda,
+  andromedaMergeStyles,
+  basicDark,
+  basicDarkMergeStyles,
+  basicLight,
+  basicLightMergeStyles,
+  catppuccinMocha,
+  catppuccinMochaMergeStyles,
+  cobalt2,
+  cobalt2MergeStyles,
+  forest,
+  forestMergeStyles,
   githubDark,
+  githubDarkMergeStyles,
   githubLight,
+  githubLightMergeStyles,
+  gruvboxDark,
+  gruvboxDarkMergeStyles,
+  gruvboxLight,
+  gruvboxLightMergeStyles,
+  highContrastDark,
+  highContrastDarkMergeStyles,
+  highContrastLight,
+  highContrastLightMergeStyles,
+  materialDark,
+  materialDarkMergeStyles,
+  materialLight,
+  materialLightMergeStyles,
+  monokai,
+  monokaiMergeStyles,
+  nord,
+  nordMergeStyles,
+  palenight,
+  palenightMergeStyles,
   solarizedDark,
+  solarizedDarkMergeStyles,
   solarizedLight,
+  solarizedLightMergeStyles,
+  synthwave84,
+  synthwave84MergeStyles,
+  tokyoNightDay,
+  tokyoNightDayMergeStyles,
+  tokyoNightStorm,
+  tokyoNightStormMergeStyles,
+  volcano,
+  volcanoMergeStyles,
+  vsCodeDark,
+  vsCodeDarkMergeStyles,
+  vsCodeLight,
+  vsCodeLightMergeStyles,
 };
 
 // initialize cm6
@@ -165,21 +216,21 @@ window.addEventListener("message", (event) => {
     case "update-config":
       const config = message.config;
 
-      // Update Theme
+      // update theme
       if (themeMap[config.theme]) {
         editor.dispatch({
           effects: themeCompartment.reconfigure(themeMap[config.theme]),
         });
       }
 
-      // Update Fonts (applied to editor container)
+      // update fonts
       const editorElement = document.getElementById("editor");
       if (editorElement) {
         editorElement.style.fontSize = `${config.fontSize}px`;
         editorElement.style.fontFamily = config.fontFamily;
       }
 
-      // Update Colors (CSS Variables)
+      // update colors (css variables)
       document.documentElement.style.setProperty("--mkdown-color-italics", config.colorItalics);
       document.documentElement.style.setProperty("--mkdown-color-quote", config.colorQuote);
       break;

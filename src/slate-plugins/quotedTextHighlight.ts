@@ -28,7 +28,7 @@ export const dialogueHighlighter = ViewPlugin.fromClass(
           const start = from + match.index;
           const end = start + match[0].length;
 
-          // Find the syntax node that contains this range
+          // find the syntax node that contains this range
           let inCode = false;
           syntaxTree(view.state).iterate({
             from: start,
