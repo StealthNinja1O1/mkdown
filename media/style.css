@@ -1,10 +1,36 @@
-/* cross-theme styles, largely a band-aid solution */
-.cm-codeBlock {
-  background-color: rgba(0, 0, 0, 0.33);
-  /* transparent */
-  padding: 0 0.5em !important;
-  overflow-x: auto;
-  font-family: monospace;
-  position: relative;
-  z-index: 0;
+/* mkdown base styles — resets and webview container */
+/* Zenith design tokens and component styles are in zenith-styles.css */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#editor {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Layout alignment ─────────────────────────────────────────── */
+
+/* Obsidian: centered content with max-width (default) */
+.zenith-md-editor.layout-obsidian .cm-content {
+  max-width: var(--zenith-content-max-width, 800px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Center: centered, no max-width */
+.zenith-md-editor.layout-center .cm-content {
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Left: flush left, full width */
+.zenith-md-editor.layout-left .cm-content {
+  max-width: none;
+  margin: 0;
 }

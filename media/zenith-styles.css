@@ -1,0 +1,462 @@
+/* ─── ZenithMDEditor — Design Tokens (CSS Custom Properties) ────── */
+/* Adapted for mkdown VS Code extension */
+
+.zenith-md-editor {
+  /* ── Accent / brand color ── */
+  --zenith-accent: #f97316;
+  --zenith-accent-rgb: 249, 115, 22;
+
+  /* ── Backgrounds ── */
+  --zenith-bg: #000000;
+  --zenith-bg-surface: #0a0a0a;
+  --zenith-bg-code: #0a0a0a;
+  --zenith-bg-highlight: rgba(255, 200, 50, 0.25);
+  --zenith-bg-active-line: rgba(255, 255, 255, 0.03);
+  --zenith-bg-selection: rgba(249, 115, 22, 0.2);
+
+  /* ── Text colors ── */
+  --zenith-text: #e0e0e0;
+  --zenith-text-muted: #666666;
+  --zenith-text-dim: #555555;
+  --zenith-text-syntax: #555555;
+
+  /* ── Borders ── */
+  --zenith-border: #333333;
+  --zenith-border-subtle: #1a1a1a;
+
+  /* ── Blockquotes ── */
+  --zenith-blockquote-border: var(--zenith-accent);
+  --zenith-blockquote-text: #aaaaaa;
+
+  /* ── Code blocks ── */
+  --zenith-code-bg: #0a0a0a;
+  --zenith-code-lang-color: #888888;
+  --zenith-code-font: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* ── Frontmatter ── */
+  --zenith-frontmatter-text: #888888;
+  --zenith-frontmatter-delim: #555555;
+
+  /* ── Footnotes ── */
+  --zenith-footnote-text: var(--zenith-accent);
+  --zenith-footnote-bg: rgba(249, 115, 22, 0.1);
+  --zenith-footnote-def-border: #333333;
+  --zenith-footnote-tooltip-bg: #1a1a1a;
+  --zenith-footnote-tooltip-text: #cccccc;
+  --zenith-footnote-tooltip-border: #333333;
+
+  /* ── Scrollbar ── */
+  --zenith-scrollbar-thumb: #222222;
+  --zenith-scrollbar-thumb-hover: #333333;
+
+  /* ── Gutters ── */
+  --zenith-gutter-bg: #000000;
+  --zenith-gutter-text: #555555;
+
+  /* ── Font ── */
+  --zenith-font: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  --zenith-font-size: 15px;
+  --zenith-line-height: 1.7;
+
+  /* ── Heading sizes ── */
+  --zenith-heading1-size: 2em;
+  --zenith-heading2-size: 1.6em;
+  --zenith-heading3-size: 1.3em;
+  --zenith-heading4-size: 1.1em;
+  --zenith-heading5-size: 1em;
+  --zenith-heading6-size: 1em;
+
+  /* ── Heading top margins ── */
+  --zenith-heading1-margin: 24px;
+  --zenith-heading2-margin: 20px;
+  --zenith-heading3-margin: 16px;
+  --zenith-heading4-margin: 12px;
+  --zenith-heading5-margin: 10px;
+  --zenith-heading6-margin: 10px;
+
+  /* ── Markdown syntax colors ── */
+  --zenith-heading-color: #ffffff;
+  --zenith-heading6-color: #cccccc;
+  --zenith-strong-color: #ffffff;
+  --zenith-emphasis-color: #ffffff;
+  --zenith-strikethrough-color: #888888;
+  --zenith-link-color: #f97316;
+  --zenith-url-color: #555555;
+  --zenith-inline-code-color: #e5e5e5;
+  --zenith-inline-code-bg: #1a1a1a;
+  --zenith-quote-color: #aaaaaa;
+  --zenith-meta-color: #555555;
+
+  /* ── Code syntax colors ── */
+  --zenith-syn-keyword: #c678dd;
+  --zenith-syn-string: #98c379;
+  --zenith-syn-number: #d19a66;
+  --zenith-syn-bool: #d19a66;
+  --zenith-syn-comment: #5c6370;
+  --zenith-syn-function: #61afef;
+  --zenith-syn-variable: #e06c75;
+  --zenith-syn-type: #e5c07b;
+  --zenith-syn-operator: #56b6c2;
+  --zenith-syn-punctuation: #abb2bf;
+  --zenith-syn-tag: #e06c75;
+  --zenith-syn-attribute: #d19a66;
+  --zenith-syn-escape: #d19a66;
+  --zenith-syn-deleted: #e06c75;
+  --zenith-syn-inserted: #98c379;
+  --zenith-syn-changed: #e5c07b;
+  --zenith-syn-content: #e0e0e0;
+
+  /* ── Layout ── */
+  --zenith-content-max-width: 800px;
+  --zenith-content-padding: 16px 24px;
+}
+
+/* ── Light theme token overrides ── */
+.zenith-md-light {
+  --zenith-bg: #ffffff;
+  --zenith-text: #1a1a1a;
+  --zenith-bg-surface: #f5f5f5;
+  --zenith-bg-code: #f5f5f5;
+  --zenith-bg-highlight: rgba(200, 150, 0, 0.2);
+  --zenith-bg-active-line: rgba(0, 0, 0, 0.03);
+  --zenith-bg-selection: rgba(249, 115, 22, 0.15);
+
+  --zenith-text-muted: #999999;
+  --zenith-text-dim: #888888;
+  --zenith-text-syntax: #aaaaaa;
+
+  --zenith-border: #e5e5e5;
+  --zenith-border-subtle: #e5e5e5;
+
+  --zenith-blockquote-text: #666666;
+  --zenith-code-lang-color: #888888;
+
+  --zenith-frontmatter-text: #888888;
+  --zenith-frontmatter-delim: #aaaaaa;
+
+  --zenith-footnote-bg: rgba(249, 115, 22, 0.08);
+  --zenith-footnote-def-border: #dddddd;
+  --zenith-footnote-tooltip-bg: #ffffff;
+  --zenith-footnote-tooltip-text: #333333;
+  --zenith-footnote-tooltip-border: #dddddd;
+
+  --zenith-scrollbar-thumb: #cccccc;
+  --zenith-scrollbar-thumb-hover: #aaaaaa;
+
+  --zenith-gutter-bg: #fafafa;
+  --zenith-gutter-text: #999999;
+
+  --zenith-heading-color: #1a1a1a;
+  --zenith-heading6-color: #666666;
+  --zenith-strong-color: #1a1a1a;
+  --zenith-emphasis-color: #1a1a1a;
+  --zenith-strikethrough-color: #888888;
+  --zenith-link-color: #e65100;
+  --zenith-url-color: #aaaaaa;
+  --zenith-inline-code-color: #333333;
+  --zenith-inline-code-bg: #f0f0f0;
+  --zenith-quote-color: #666666;
+  --zenith-meta-color: #aaaaaa;
+
+  --zenith-syn-keyword: #a626a4;
+  --zenith-syn-string: #50a14f;
+  --zenith-syn-number: #986801;
+  --zenith-syn-bool: #986801;
+  --zenith-syn-comment: #a0a1a7;
+  --zenith-syn-function: #4078f2;
+  --zenith-syn-variable: #e45649;
+  --zenith-syn-type: #c18401;
+  --zenith-syn-operator: #0184bc;
+  --zenith-syn-punctuation: #383a42;
+  --zenith-syn-tag: #e45649;
+  --zenith-syn-attribute: #986801;
+  --zenith-syn-escape: #986801;
+  --zenith-syn-deleted: #e45649;
+  --zenith-syn-inserted: #50a14f;
+  --zenith-syn-changed: #c18401;
+  --zenith-syn-content: #383a42;
+}
+
+/* ─── Container ──────────────────────────────────────────────────── */
+
+.zenith-md-editor {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--zenith-bg);
+  color: var(--zenith-text);
+  font-family: var(--zenith-font);
+  font-size: var(--zenith-font-size);
+}
+
+.zenith-md-editor .cm-editor {
+  height: 100%;
+  outline: none;
+}
+
+.zenith-md-editor .cm-scroller {
+  overflow: auto !important;
+}
+
+/* ─── Placeholder ─────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-content[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--zenith-text-dim);
+  pointer-events: none;
+  position: absolute;
+}
+
+/* ─── Code blocks ──────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-line.cm-md-codeblock {
+  background: var(--zenith-code-bg);
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-left: -24px;
+  margin-right: -24px;
+  font-family: var(--zenith-code-font);
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+.zenith-md-editor .cm-code-lang-badge {
+  display: inline-block;
+  font-family: var(--zenith-font);
+  font-size: 0.7em;
+  font-weight: 500;
+  color: var(--zenith-code-lang-color);
+  background: var(--zenith-bg-surface);
+  padding: 1px 8px;
+  border-radius: 3px;
+  margin-left: -24px;
+  user-select: none;
+  vertical-align: middle;
+}
+
+/* ─── Tables ───────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-table-header { font-weight: 600; }
+.zenith-md-editor .cm-table-delimiter { color: var(--zenith-text-dim); user-select: none; }
+.zenith-md-editor .cm-table-row { color: var(--zenith-text); }
+
+/* ─── Images ───────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-image-inline img {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 6px;
+  border: 1px solid var(--zenith-border);
+}
+
+/* ─── Bullet ───────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-bullet {
+  color: var(--zenith-accent);
+  font-weight: 700;
+  user-select: none;
+  margin-right: 4px;
+}
+
+/* ─── Headings ──────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-line.cm-md-heading1 { font-size: var(--zenith-heading1-size); font-weight: 700; padding-top: var(--zenith-heading1-margin); line-height: 1.3; }
+.zenith-md-editor .cm-line.cm-md-heading2 { font-size: var(--zenith-heading2-size); font-weight: 700; padding-top: var(--zenith-heading2-margin); line-height: 1.3; }
+.zenith-md-editor .cm-line.cm-md-heading3 { font-size: var(--zenith-heading3-size); font-weight: 700; padding-top: var(--zenith-heading3-margin); line-height: 1.35; }
+.zenith-md-editor .cm-line.cm-md-heading4 { font-size: var(--zenith-heading4-size); font-weight: 700; padding-top: var(--zenith-heading4-margin); line-height: 1.4; }
+.zenith-md-editor .cm-line.cm-md-heading5 { font-size: var(--zenith-heading5-size); font-weight: 700; padding-top: var(--zenith-heading5-margin); line-height: 1.4; }
+.zenith-md-editor .cm-line.cm-md-heading6 { font-size: var(--zenith-heading6-size); font-weight: 700; padding-top: var(--zenith-heading6-margin); line-height: 1.4; color: var(--zenith-text-muted); }
+
+/* ─── Horizontal Rule (---) ──────────────────────────────────── */
+
+.zenith-md-editor .cm-line.cm-md-hr {
+  border-bottom: 1px solid var(--zenith-border);
+  margin: 16px 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ─── Selection ────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-selectionBackground,
+.zenith-md-editor .cm-focused .cm-selectionBackground {
+  background-color: var(--zenith-bg-selection) !important;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-scroller::-webkit-scrollbar { width: 6px; height: 6px; }
+.zenith-md-editor .cm-scroller::-webkit-scrollbar-track { background: transparent; }
+.zenith-md-editor .cm-scroller::-webkit-scrollbar-thumb { background: var(--zenith-scrollbar-thumb); border-radius: 3px; }
+.zenith-md-editor .cm-scroller::-webkit-scrollbar-thumb:hover { background: var(--zenith-scrollbar-thumb-hover); }
+
+/* ─── Links ────────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-link-open-icon {
+  display: inline-flex; align-items: center; cursor: pointer; opacity: 0;
+  transition: opacity 0.15s ease; color: var(--zenith-accent);
+  margin-left: 2px; vertical-align: middle; user-select: none;
+}
+.zenith-md-editor .cm-line:hover .cm-link-open-icon { opacity: 0.6; }
+.zenith-md-editor .cm-link-open-icon:hover { opacity: 1 !important; }
+
+.zenith-md-editor .cm-link-text {
+  color: var(--zenith-accent); cursor: text; text-decoration: none;
+  border-bottom: 1px solid transparent; transition: border-color 0.15s;
+}
+.zenith-md-editor .cm-line:hover .cm-link-text {
+  border-bottom-color: rgba(var(--zenith-accent-rgb), 0.3);
+}
+
+/* ─── HTML ─────────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-html-rendered { display: inline; user-select: none; }
+.zenith-md-editor .cm-html-rendered[contenteditable="false"] { cursor: default; }
+.zenith-md-editor .cm-html-rendered > div,
+.zenith-md-editor .cm-html-rendered > p,
+.zenith-md-editor .cm-html-rendered > details { margin: 4px 0; }
+
+/* ─── Dynamic highlighting ─────────────────────────────────────── */
+
+.zenith-md-editor .cm-dynamic-highlight,
+.zenith-md-editor .cm-dynamic-highlight * {
+  /* Force children to inherit the dynamic highlighter's inline color,
+     overriding any HighlightStyle class-based color on inner elements */
+  color: inherit !important;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* ─── Highlight/Mark (==text==) ────────────────────────────────── */
+
+.zenith-md-editor .cm-md-highlight {
+  background-color: var(--zenith-bg-highlight);
+  border-radius: 2px;
+  padding: 1px 0;
+}
+
+/* ─── Footnotes ────────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-footnote-ref {
+  display: inline-flex; align-items: center;
+  color: var(--zenith-footnote-text); font-size: 0.75em; font-weight: 600;
+  cursor: default; padding: 0 3px; border-radius: 3px;
+  background: var(--zenith-footnote-bg); user-select: none;
+  position: relative; vertical-align: super;
+}
+
+.zenith-md-editor .cm-footnote-tooltip {
+  display: none; position: absolute; bottom: 100%; left: 50%;
+  transform: translateX(-50%);
+  background: var(--zenith-footnote-tooltip-bg);
+  border: 1px solid var(--zenith-footnote-tooltip-border);
+  border-radius: 6px; padding: 8px 12px; font-size: 12px;
+  font-style: normal; font-weight: normal;
+  color: var(--zenith-footnote-tooltip-text);
+  width: max-content; max-width: 300px; white-space: normal;
+  word-wrap: break-word; z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none; margin-bottom: 6px; line-height: 1.4; text-align: left;
+}
+
+.zenith-md-editor .cm-footnote-ref:hover .cm-footnote-tooltip { display: block; }
+
+.zenith-md-editor .cm-line.cm-footnote-def {
+  color: var(--zenith-text-muted); font-size: 0.9em;
+  font-family: var(--zenith-code-font); padding-left: 8px;
+  border-left: 2px solid var(--zenith-footnote-def-border);
+}
+
+.zenith-md-editor .cm-footnote-def-badge {
+  display: inline-flex; align-items: center; margin-right: 4px;
+  cursor: pointer; vertical-align: baseline;
+}
+.zenith-md-editor .cm-footnote-def-badge sup {
+  background: var(--zenith-bg-surface); color: var(--zenith-accent);
+  border: 1px solid var(--zenith-border); border-radius: 4px;
+  padding: 0 5px; font-size: 0.75em; font-weight: 600; line-height: 1.4;
+  transition: background 0.15s, border-color 0.15s;
+}
+.zenith-md-editor .cm-footnote-def-badge:hover sup {
+  background: var(--zenith-bg-active-line); border-color: var(--zenith-accent);
+}
+
+/* ─── KaTeX Math ───────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-math-inline { display: inline; user-select: none; cursor: default; }
+.zenith-md-editor .cm-math-block { display: block; margin: 8px 0; text-align: center; user-select: none; cursor: default; padding: 12px 0; overflow-x: auto; }
+.zenith-md-editor .cm-line.cm-math-hidden { display: none; }
+.zenith-md-editor .cm-line.cm-html-hidden { display: none; }
+
+/* ─── YAML Frontmatter ─────────────────────────────────────────── */
+
+.zenith-md-editor .cm-line.cm-frontmatter-line {
+  font-family: var(--zenith-code-font); font-size: 0.85em;
+  color: var(--zenith-frontmatter-text);
+  background: rgba(255, 255, 255, 0.02); padding-left: 8px;
+}
+.zenith-md-editor .cm-frontmatter-delim { color: var(--zenith-frontmatter-delim); }
+
+/* ─── Fold gutter ──────────────────────────────────────────────── */
+
+.zenith-md-editor .cm-foldGutter { width: 16px; text-align: center; }
+.zenith-md-editor .cm-foldGutter span { cursor: pointer; color: var(--zenith-text-dim); transition: color 0.15s; }
+
+/* ─── Selection Toolbar ────────────────────────────────────────── */
+
+.cm-selection-toolbar {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  background: var(--zenith-bg-surface, #111);
+  border: 1px solid var(--zenith-border, #333);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  align-items: center;
+  animation: cm-toolbar-in 0.12s ease-out;
+  user-select: none;
+}
+
+@keyframes cm-toolbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cm-selection-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--zenith-text, #e0e0e0);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.cm-selection-toolbar-btn:hover {
+  background: rgba(var(--zenith-accent-rgb, 249, 115, 22), 0.15);
+  color: var(--zenith-accent, #f97316);
+}
+
+.cm-selection-toolbar-btn:active {
+  background: rgba(var(--zenith-accent-rgb, 249, 115, 22), 0.25);
+}
+
+.cm-selection-toolbar-btn svg {
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+}

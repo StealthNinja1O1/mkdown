@@ -38,11 +38,8 @@
         "mkdown.theme": {
           "type": "string",
           "enum": [
-            "vsCodeDark",
-            "vsCodeLight",
-            "githubDark",
-            "githubLight",
-            "solarizedDark",
+            "zenith-dark",
+            "zenith-light",
             "abcdef",
             "abcdefMergeStyles",
             "applyMergeRevertStyles",
@@ -127,17 +124,66 @@
           "default": "sans-serif",
           "description": "Font family for the editor."
         },
-        "mkdown.colors.italics": {
+        "mkdown.layout.alignment": {
           "type": "string",
-          "format": "color-hex",
-          "default": "#808080CC",
-          "description": "CSS color for italics and emphasized text."
+          "enum": [
+            "obsidian",
+            "left",
+            "center"
+          ],
+          "enumDescriptions": [
+            "Centered content with max-width (like Obsidian)",
+            "Content flush left, full width",
+            "Content centered, no max-width"
+          ],
+          "default": "obsidian",
+          "description": "Content alignment in the editor."
         },
-        "mkdown.colors.quote": {
-          "type": "string",
-          "format": "color-hex",
-          "default": "#f08400",
-          "description": "CSS color for quoted text."
+        "mkdown.highlight.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable dynamic regex-based highlighting."
+        },
+        "mkdown.highlight.rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern (e.g. '\"[^\"]*\"' for double-quoted text)."
+              },
+              "color": {
+                "type": "string",
+                "description": "Hex color for the highlight (e.g. '#f97316')."
+              },
+              "label": {
+                "type": "string",
+                "description": "Optional label for this rule."
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          },
+          "default": [
+            {
+              "pattern": "\"[^\"]*\"",
+              "color": "#f97316",
+              "label": "Double quotes"
+            },
+            {
+              "pattern": "\\*[^*]+\\*",
+              "color": "#808080CC",
+              "label": "Italics"
+            }
+          ],
+          "description": "Custom regex rules for dynamic highlighting. Each rule has a pattern, optional color, and optional label."
+        },
+        "mkdown.selectionToolbar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a floating formatting toolbar when text is selected."
         }
       }
     }
@@ -172,7 +218,6 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.28.4",
     "@codemirror/autocomplete": "^6.19.0",
     "@codemirror/commands": "^6.9.0",
     "@codemirror/lang-javascript": "^6.2.4",
@@ -188,8 +233,8 @@
     "@fsegurai/codemirror-theme-bundle": "^6.3.0",
     "@lezer/highlight": "^1.2.2",
     "@lezer/markdown": "^1.5.1",
-    "@uiw/codemirror-theme-vscode": "^4.25.2",
     "codemirror": "^6.0.2",
-    "isomorphic-dompurify": "^1.0.0"
+    "isomorphic-dompurify": "^1.0.0",
+    "katex": "^0.16.47"
   }
 }

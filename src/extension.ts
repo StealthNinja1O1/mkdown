@@ -16,8 +16,10 @@ export function activate(context: vscode.ExtensionContext) {
             theme: config.get("theme"),
             fontSize: config.get("font.size"),
             fontFamily: config.get("font.family"),
-            colorItalics: config.get("colors.italics"),
-            colorQuote: config.get("colors.quote"),
+            alignment: config.get("layout.alignment"),
+            highlightEnabled: config.get("highlight.enabled"),
+            highlightRules: config.get("highlight.rules"),
+            selectionToolbar: config.get("selectionToolbar.enabled"),
           },
         });
       }
@@ -30,7 +32,9 @@ export function activate(context: vscode.ExtensionContext) {
 class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = "mkdown.editor";
   private isUpdatingFromWebview = false;
+  private lastWebviewText = "";
   private webviews = new Set<vscode.WebviewPanel>();
+  private latestConfig: any = null;
 
   constructor(private readonly context: vscode.ExtensionContext) { }
 
@@ -43,10 +47,12 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   public postMessageToActiveWebview(message: any) {
+    // Cache config so we can re-apply it when panels become visible again
+    if (message.type === "update-config") {
+      this.latestConfig = message.config;
+    }
     for (const panel of this.webviews) {
-      if (panel.visible) {
-        panel.webview.postMessage(message);
-      }
+      panel.webview.postMessage(message);
     }
   }
 
@@ -81,8 +87,10 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
           theme: config.get("theme"),
           fontSize: config.get("font.size"),
           fontFamily: config.get("font.family"),
-          colorItalics: config.get("colors.italics"),
-          colorQuote: config.get("colors.quote"),
+          alignment: config.get("layout.alignment"),
+          highlightEnabled: config.get("highlight.enabled"),
+          highlightRules: config.get("highlight.rules"),
+          selectionToolbar: config.get("selectionToolbar.enabled"),
         },
       });
     }, 500);
@@ -90,10 +98,14 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
     // sync host changes to webview
     const subscription = vscode.workspace.onDidChangeTextDocument((e) => {
       if (e.document.uri.toString() === document.uri.toString() && !this.isUpdatingFromWebview) {
-        webviewPanel.webview.postMessage({
-          type: "update",
-          text: document.getText(),
-        });
+        const newText = document.getText();
+        // Don't echo back text that originated from the webview
+        if (newText !== this.lastWebviewText) {
+          webviewPanel.webview.postMessage({
+            type: "update",
+            text: newText,
+          });
+        }
       }
     });
 
@@ -103,10 +115,21 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
       this.webviews.delete(webviewPanel);
     });
 
+    // re-apply config when panel becomes visible again (e.g. after switching back from settings)
+    webviewPanel.onDidChangeViewState((e) => {
+      if (e.webviewPanel.visible && this.latestConfig) {
+        webviewPanel.webview.postMessage({
+          type: "update-config",
+          config: this.latestConfig,
+        });
+      }
+    });
+
     // handle webview messages
     webviewPanel.webview.onDidReceiveMessage((e) => {
       switch (e.type) {
         case "edit":
+          this.lastWebviewText = e.text;
           this.updateTextDocument(document, e.text);
           return;
         case "info":
@@ -135,6 +158,7 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   private getWebviewContent(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "webview.dist.js"));
     const cssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "style.css"));
+    const zenithCssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "zenith-styles.css"));
     const nonce = getNonce();
 
     // generate secure html
@@ -152,7 +176,8 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
                 ">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link href="${cssUri}" rel="stylesheet">
-                <title>Slate Editor</title>
+                <link href="${zenithCssUri}" rel="stylesheet">
+                <title>mkdown Editor</title>
             </head>
             <body>
                 <div id="editor"></div>
