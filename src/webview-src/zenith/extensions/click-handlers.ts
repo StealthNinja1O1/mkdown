@@ -18,10 +18,12 @@ export function createClickHandlers(): Extension {
 
       let target = node;
       while (target && target.name !== "Link" && target.name !== "URL") {
-        target = target.parent!;
+        const parent = target.parent;
+        if (!parent) break;
+        target = parent;
       }
 
-      if (!target) return false;
+      if (!target || (target.name !== "Link" && target.name !== "URL")) return false;
 
       const url = extractUrlFromNode(view, target);
       if (!url) return false;

@@ -6,6 +6,7 @@ import {
   type ViewUpdate,
 } from "@codemirror/view";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 
 const HIGHLIGHT_RE = /==((?:[^\n=]|=(?!=))+)==/g;
 
@@ -51,5 +52,3 @@ export const highlightRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

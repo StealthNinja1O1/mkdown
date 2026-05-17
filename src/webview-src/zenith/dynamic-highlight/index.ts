@@ -41,7 +41,7 @@ export function createDynamicHighlighter(rules: DynamicHighlightRule[]) {
           let lineOffset = from;
 
           for (const lineText of lineTexts) {
-            if (lineText.trimStart().startsWith("```")) {
+            if (/^\s*(```|~~~)/.test(lineText)) {
               inCodeBlock = !inCodeBlock;
               lineOffset += lineText.length + 1;
               continue;

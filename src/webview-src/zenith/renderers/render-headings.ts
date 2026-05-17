@@ -6,6 +6,7 @@ import {
   type ViewUpdate,
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
+import type { Range } from "../types";
 import { createInlineRenderer } from "./base-renderer";
 
 export const headingMarkHider = createInlineRenderer(
@@ -77,7 +78,7 @@ export const headingLineDecorator = ViewPlugin.fromClass(
     }
 
     buildDecorations(view: EditorView): DecorationSet {
-      const decorations: any[] = [];
+      const decorations: Range<Decoration>[] = [];
       const state = view.state;
       const doc = state.doc;
 

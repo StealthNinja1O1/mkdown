@@ -19,7 +19,6 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "vscode-package": "npx @vscode/vsce package --out mkdown.vsix --no-dependencies",
     "customEditors": [
       {
         "viewType": "mkdown.editor",

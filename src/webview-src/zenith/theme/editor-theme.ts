@@ -46,16 +46,6 @@ const darkTheme = EditorView.theme(
     },
     ".cm-line": { padding: "0 4px" },
     ".cm-focused": { outline: "none" },
-    ".cm-line.cm-md-codeblock": {
-      backgroundColor: "var(--zenith-code-bg)",
-      paddingLeft: "24px",
-      paddingRight: "24px",
-      marginLeft: "-24px",
-      marginRight: "-24px",
-      fontFamily: "var(--zenith-code-font)",
-      fontSize: "0.9em",
-      lineHeight: "1.6",
-    },
     ".cm-line.cm-md-blockquote": {
       borderLeft: "3px solid var(--zenith-blockquote-border)",
       paddingLeft: "12px",
@@ -106,14 +96,34 @@ const lightTheme = EditorView.theme(
     "&": {
       backgroundColor: "var(--zenith-bg)",
       color: "var(--zenith-text)",
+      fontSize: "var(--zenith-font-size)",
+      fontFamily: "var(--zenith-font)",
+      height: "100%",
     },
-    ".cm-content": { caretColor: "var(--zenith-accent)" },
+    ".cm-content": {
+      caretColor: "var(--zenith-accent)",
+      lineHeight: "var(--zenith-line-height)",
+      maxWidth: "var(--zenith-content-max-width)",
+      margin: "0 auto",
+    },
     ".cm-cursor": { borderLeftColor: "var(--zenith-accent)" },
+    ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
+      backgroundColor: "var(--zenith-bg-selection) !important",
+    },
+    ".cm-activeLine": {
+      backgroundColor: "var(--zenith-bg-active-line)",
+    },
     ".cm-gutters": {
       backgroundColor: "var(--zenith-gutter-bg)",
       color: "var(--zenith-gutter-text)",
       borderRight: "1px solid var(--zenith-border-subtle)",
+      paddingRight: "8px",
     },
+    ".cm-activeLineGutter": {
+      backgroundColor: "transparent",
+      color: "var(--zenith-accent)",
+    },
+    ".cm-line": { padding: "0 4px" },
     ".cm-focused": { outline: "none" },
     ".cm-line.cm-md-blockquote": {
       borderLeft: "3px solid var(--zenith-blockquote-border)",
@@ -131,6 +141,14 @@ const lightTheme = EditorView.theme(
       lineHeight: "0.3",
     },
     ".cm-line.cm-table-row": { color: "var(--zenith-text)" },
+    ".cm-task-marker": { color: "var(--zenith-accent)" },
+    ".cm-mark": { color: "var(--zenith-text-syntax)" },
+    ".cm-math-block": { padding: "12px 0" },
+    ".cm-frontmatter-line": {
+      fontFamily: "var(--zenith-code-font)",
+      fontSize: "0.85em",
+      color: "var(--zenith-frontmatter-text)",
+    },
   },
   { dark: false },
 );

@@ -6,6 +6,7 @@ import {
   type ViewUpdate,
 } from "@codemirror/view";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 
 export const frontmatterRenderer = ViewPlugin.fromClass(
   class {
@@ -33,7 +34,7 @@ export const frontmatterRenderer = ViewPlugin.fromClass(
       for (let i = 2; i <= totalLines; i++) {
         const line = doc.line(i);
         if (line.text === "---") { endLine = i; break; }
-        if (i > 50) break;
+        if (i > 50) break; // Limit frontmatter search to first 50 lines for performance
       }
 
       if (endLine === -1) return Decoration.none;
@@ -60,5 +61,3 @@ export const frontmatterRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

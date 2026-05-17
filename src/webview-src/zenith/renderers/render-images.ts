@@ -8,6 +8,7 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 
 class ImageWidget extends WidgetType {
   constructor(readonly url: string, readonly alt: string) { super(); }
@@ -25,7 +26,7 @@ class ImageWidget extends WidgetType {
     img.onerror = () => {
       container.innerHTML = "";
       const fallback = document.createElement("span");
-      fallback.style.cssText = `display: inline-flex; align-items: center; gap: 6px; color: #888; font-style: italic; font-size: 0.9em; padding: 8px 12px; background: #1a1a1a; border-radius: 6px; border: 1px dashed #333;`;
+      fallback.className = "cm-image-error";
       fallback.textContent = `📷 ${this.alt || this.url}`;
       container.appendChild(fallback);
     };
@@ -110,5 +111,3 @@ export const imageRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

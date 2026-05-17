@@ -8,7 +8,11 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 import DOMPurify from "isomorphic-dompurify";
+
+/** Matches inline HTML tags like <strong>text</strong> */
+const INLINE_HTML_RE = /<(strong|em|b|i|s|mark|kbd|code|sub|sup|small|u|del|ins|abbr|span|cite)(\s[^>]*)?>([^<]*?)<\/\1>/g;
 
 class HTMLWidget extends WidgetType {
   constructor(readonly html: string, readonly isBlock: boolean) { super(); }
@@ -108,7 +112,8 @@ export const htmlRenderer = ViewPlugin.fromClass(
           const line = state.doc.line(ln);
           const lineText = line.text;
 
-          const INLINE_HTML_RE = /<(strong|em|b|i|s|mark|kbd|code|sub|sup|small|u|del|ins|abbr|span|abbr|cite)(\s[^>]*)?>([^<]*?)<\/\1>/g;
+          // Regex is defined at module level and reset via lastIndex
+          INLINE_HTML_RE.lastIndex = 0;
           let match: RegExpExecArray | null;
 
           while ((match = INLINE_HTML_RE.exec(lineText)) !== null) {
@@ -128,5 +133,3 @@ export const htmlRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

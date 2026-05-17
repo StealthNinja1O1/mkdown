@@ -7,6 +7,7 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 
 export const blockquoteRenderer = ViewPlugin.fromClass(
   class {
@@ -66,5 +67,3 @@ export const blockquoteRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

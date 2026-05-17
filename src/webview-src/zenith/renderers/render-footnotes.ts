@@ -7,6 +7,7 @@ import {
   WidgetType,
 } from "@codemirror/view";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 
 const FN_REF_RE = /\[\^([^\]]+)\]/g;
 const FN_DEF_RE = /^\[\^([^\]]+)\]:\s+(.+)$/gm;
@@ -160,5 +161,3 @@ export const footnoteRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

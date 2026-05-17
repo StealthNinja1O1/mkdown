@@ -1,6 +1,13 @@
 // ZenithMD types — adapted for VS Code webview (no React)
 // Ported from Inspiration/ZenithMDEditor/types.ts
 
+import type { Extension } from "@codemirror/state";
+
+// ─── Shared generic type ─────────────────────────────────────────
+
+/** A generic range with an associated value, used by decoration builders */
+export type Range<T> = { from: number; to: number; value: T };
+
 // ─── Token names ────────────────────────────────────────────────
 
 export type ZenithTokenName =
@@ -134,8 +141,6 @@ export interface ZenithFeatures {
   codeFolding?: boolean;
   selectionToolbar?: boolean;
 }
-
-import type { Extension } from "@codemirror/state";
 
 // Re-export from create-editor
 export type { ZenithEditorInstance } from "./create-editor";

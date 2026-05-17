@@ -1,11 +1,17 @@
 import * as vscode from "vscode";
 
-export function activate(context: vscode.ExtensionContext) {
-  // register provider
-  const provider = new SlateEditorProvider(context);
-  context.subscriptions.push(SlateEditorProvider.register(context, provider));
+/** Delay before sending initial config to allow webview to initialize */
+const WEBVIEW_INIT_DELAY_MS = 500;
 
-  // watch config
+interface WebviewMessage {
+  type: string;
+  [key: string]: unknown;
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  const provider = new MkdownEditorProvider(context);
+  context.subscriptions.push(MkdownEditorProvider.register(context, provider));
+
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("mkdown")) {
@@ -27,32 +33,41 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-// boilerplate, mostly
-// major reference: https://vogella.com/blog/multiple-webviews-single-extension/
-class SlateEditorProvider implements vscode.CustomTextEditorProvider {
+/**
+ * Custom text editor provider for the mkdown Markdown Editor.
+ * Manages webview panels, config synchronization, and document syncing.
+ *
+ * Reference: https://vogella.com/blog/multiple-webviews-single-extension/
+ */
+class MkdownEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = "mkdown.editor";
   private isUpdatingFromWebview = false;
   private lastWebviewText = "";
   private webviews = new Set<vscode.WebviewPanel>();
-  private latestConfig: any = null;
+  private latestConfig: Record<string, unknown> | null = null;
 
   constructor(private readonly context: vscode.ExtensionContext) { }
 
-  public static register(context: vscode.ExtensionContext, provider: SlateEditorProvider): vscode.Disposable {
-    return vscode.window.registerCustomEditorProvider(SlateEditorProvider.viewType, provider, {
+  public static register(context: vscode.ExtensionContext, provider: MkdownEditorProvider): vscode.Disposable {
+    return vscode.window.registerCustomEditorProvider(MkdownEditorProvider.viewType, provider, {
       webviewOptions: {
         retainContextWhenHidden: true,
       },
     });
   }
 
-  public postMessageToActiveWebview(message: any) {
+  public postMessageToActiveWebview(message: WebviewMessage) {
     // Cache config so we can re-apply it when panels become visible again
     if (message.type === "update-config") {
-      this.latestConfig = message.config;
+      this.latestConfig = message.config as Record<string, unknown>;
     }
     for (const panel of this.webviews) {
-      panel.webview.postMessage(message);
+      try {
+        panel.webview.postMessage(message);
+      } catch {
+        // Panel was disposed between iterations — clean it up
+        this.webviews.delete(panel);
+      }
     }
   }
 
@@ -63,19 +78,16 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   ): Promise<void> {
     this.webviews.add(webviewPanel);
 
-    // set webview options
     webviewPanel.webview.options = {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(this.context.extensionUri, "media")],
     };
 
-    // load html content
     webviewPanel.webview.html = this.getWebviewContent(webviewPanel.webview);
 
-    // initial config
     const config = vscode.workspace.getConfiguration("mkdown");
 
-    // sync initial content & config
+    // Sync initial content & config after a short delay for webview initialization
     setTimeout(() => {
       webviewPanel.webview.postMessage({
         type: "update",
@@ -93,9 +105,9 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
           selectionToolbar: config.get("selectionToolbar.enabled"),
         },
       });
-    }, 500);
+    }, WEBVIEW_INIT_DELAY_MS);
 
-    // sync host changes to webview
+    // Sync host changes to webview
     const subscription = vscode.workspace.onDidChangeTextDocument((e) => {
       if (e.document.uri.toString() === document.uri.toString() && !this.isUpdatingFromWebview) {
         const newText = document.getText();
@@ -109,13 +121,12 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
       }
     });
 
-    // cleanup on close
     webviewPanel.onDidDispose(() => {
       subscription.dispose();
       this.webviews.delete(webviewPanel);
     });
 
-    // re-apply config when panel becomes visible again (e.g. after switching back from settings)
+    // Re-apply config when panel becomes visible again (e.g. after switching back from settings)
     webviewPanel.onDidChangeViewState((e) => {
       if (e.webviewPanel.visible && this.latestConfig) {
         webviewPanel.webview.postMessage({
@@ -125,7 +136,6 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
       }
     });
 
-    // handle webview messages
     webviewPanel.webview.onDidReceiveMessage((e) => {
       switch (e.type) {
         case "edit":
@@ -140,17 +150,17 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   private async updateTextDocument(document: vscode.TextDocument, text: string) {
-    // prevent infinite loop
     this.isUpdatingFromWebview = true;
     try {
       const edit = new vscode.WorkspaceEdit();
-
-      // replace entire document
       edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), text);
-
-      await vscode.workspace.applyEdit(edit);
+      const success = await vscode.workspace.applyEdit(edit);
+      if (!success) {
+        console.error("[mkdown] Failed to apply workspace edit");
+      }
+    } catch (error) {
+      console.error("[mkdown] Error updating document:", error);
     } finally {
-      // release lock
       this.isUpdatingFromWebview = false;
     }
   }
@@ -161,7 +171,6 @@ class SlateEditorProvider implements vscode.CustomTextEditorProvider {
     const zenithCssUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, "media", "zenith-styles.css"));
     const nonce = getNonce();
 
-    // generate secure html
     return `
             <!DOCTYPE html>
             <html lang="en">

@@ -1,4 +1,5 @@
 import { Decoration, WidgetType, type EditorView } from "@codemirror/view";
+import type { Range } from "../types";
 import { createInlineRenderer } from "./base-renderer";
 
 class CheckboxWidget extends WidgetType {
@@ -8,32 +9,12 @@ class CheckboxWidget extends WidgetType {
     const input = document.createElement("input");
     input.type = "checkbox";
     input.checked = this.checked;
-    input.style.cssText = `
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid ${this.checked ? "var(--zenith-accent, #f97316)" : "#555"};
-      border-radius: 3px;
-      background: ${this.checked ? "var(--zenith-accent, #f97316)" : "transparent"};
-      cursor: pointer;
-      vertical-align: middle;
-      margin-right: 6px;
-      position: relative;
-    `;
+    input.className = this.checked ? "cm-checkbox cm-checkbox-checked" : "cm-checkbox";
 
     if (this.checked) {
       const check = document.createElement("span");
-      check.style.cssText = `
-        position: absolute;
-        top: -2px;
-        left: 2px;
-        color: #000;
-        font-size: 12px;
-        font-weight: bold;
-        pointer-events: none;
-      `;
+      check.className = "cm-checkbox-check";
       check.textContent = "✓";
-      input.style.position = "relative";
       input.appendChild(check);
     }
 

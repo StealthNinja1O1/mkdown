@@ -7,7 +7,10 @@ import {
   WidgetType,
 } from "@codemirror/view";
 import { isRangeSelected } from "../extensions/selection-awareness";
+import type { Range } from "../types";
 import katex from "katex";
+
+const MAX_MATH_BLOCK_LINES = 50; // Limit search range for performance
 
 const INLINE_BLOCK_MATH_RE = /\$\$([^$\n]+?)\$\$/g;
 const INLINE_MATH_RE = /(?<![a-zA-Z\\])\$([^$\n]+?)\$(?![a-zA-Z0-9])/g;
@@ -28,7 +31,7 @@ class MathWidget extends WidgetType {
       });
     } catch {
       container.textContent = this.expression;
-      container.style.color = "#e06c75";
+      container.style.color = "var(--zenith-syn-variable, inherit)";
       container.style.fontStyle = "italic";
     }
 
@@ -82,7 +85,7 @@ export const mathRenderer = ViewPlugin.fromClass(
             let j = i + 1;
             let foundClose = false;
 
-            while (j <= Math.min(endLineNum, i + 50, totalLines)) {
+            while (j <= Math.min(endLineNum, i + MAX_MATH_BLOCK_LINES, totalLines)) {
               const closeLine = state.doc.line(j);
               if (closeLine.text.trim() === "$$") { foundClose = true; break; }
               exprLines.push(closeLine.text);
@@ -158,5 +161,3 @@ export const mathRenderer = ViewPlugin.fromClass(
   },
   { decorations: (v) => v.decorations },
 );
-
-type Range<T> = { from: number; to: number; value: T };

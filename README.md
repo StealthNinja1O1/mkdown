@@ -4,11 +4,12 @@
 * Syntax highlighted code blocks.
 * Styled WYSIWYG markdown, including headings, bold, italics, lists, etc.
 * In-line image embeddings.
-* Preset and custom theme configuration via VS Code's settings
+* Preset and custom theme configuration via VS Code's settings.
 * HTML live preview.
-
-### Showcase
-* Due to significant updates, a new showcase is still pending. 
+* KaTeX math rendering (`$inline$` and `$$block$$`).
+* Dynamic regex-based highlighting with custom rules.
+* Selection toolbar for quick formatting.
+* 30+ built-in themes via @fsegurai/codemirror-theme-bundle.
 
 ### Usage
 * Right click a .md file > Open with... > mkdown Markdown Editor
@@ -26,5 +27,8 @@
 3. `npm install`
 4. `npm run compile`
 5. Run with your method of choice. On VS Code, Press `F5` and run the extension for testing.
-6. Compile the .vsix with `npm run vscode-package.`
+6. Compile the .vsix with `npm run vscode-package`.
+
+### License
+MIT
 
